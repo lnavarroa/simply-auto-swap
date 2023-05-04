@@ -9,6 +9,7 @@ import { useEnsAddress } from 'wagmi'
 
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useProviderOrSigner } from 'hooks/useProviderOrSigner'
+import { Address } from 'viem'
 
 interface SwapCall {
   address: string

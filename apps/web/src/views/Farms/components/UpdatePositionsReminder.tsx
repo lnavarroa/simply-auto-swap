@@ -14,6 +14,7 @@ import { useV3TokenIdsByAccount } from 'hooks/v3/useV3Positions'
 import { useMemo, useState } from 'react'
 import { useFarmsV3Public } from 'state/farmsV3/hooks'
 import { calculateGasMargin } from 'utils'
+import { encodeFunctionData } from 'viem'
 import { useContractReads, useSigner } from 'wagmi'
 
 const lmPoolAbi = [
@@ -155,15 +156,19 @@ export function UpdatePositionsReminder_() {
     needRetrigger.forEach((userInfo) => {
       if (userInfo.needReduce) {
         calldata.push(
-          MasterChefV3.INTERFACE.encodeFunctionData('decreaseLiquidity', [
-            {
-              tokenId: toHex(userInfo.tokenId.toString()),
-              liquidity: toHex(1),
-              amount0Min: toHex(0),
-              amount1Min: toHex(0),
-              deadline: toHex(deadline.toString()),
-            },
-          ]),
+          encodeFunctionData({
+            abi: MasterChefV3.ABI,
+            functionName: 'decreaseLiquidity',
+            args: [
+              {
+                tokenId: BigInt(userInfo.tokenId.toString()),
+                liquidity: 1n,
+                amount0Min: 0n,
+                amount1Min: 0n,
+                deadline: BigInt(deadline.toString()),
+              },
+            ],
+          }),
         )
       }
       calldata.push(
